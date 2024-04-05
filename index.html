@@ -60,4 +60,47 @@
 
     // メッセージを表示する関数
     function showMessage(message) {
-      d
+      document.getElementById('messageText').innerText = message;
+      document.getElementById('message').style.display = 'block';
+    }
+
+    // 2つの緯度経度の距離を計算する関数
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3; // meters
+      const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
+      const φ2 = lat2 * Math.PI / 180;
+      const Δφ = (lat2 - lat1) * Math.PI / 180;
+      const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+      const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      const d = R * c; // in meters
+      return d;
+    }
+
+    // エラー処理
+    function showError(error) {
+      switch(error.code) {
+        case error.PERMISSION_DENIED:
+          console.error("User denied the request for Geolocation.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          console.error("Location information is unavailable.");
+          break;
+        case error.TIMEOUT:
+          console.error("The request to get user location timed out.");
+          break;
+        case error.UNKNOWN_ERROR:
+          console.error("An unknown error occurred.");
+          break;
+      }
+    }
+
+    // GPS位置の取得
+    navigator.geolocation.watchPosition(updateGPSPosition, showError);
+  </script>
+</body>
+</html>
