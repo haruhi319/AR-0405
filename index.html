@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>WebAR GPS型AR</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.js"></script>
+  <style>
+    /* メッセージのスタイリング */
+    #message {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: white;
+      padding: 10px;
+      border: 2px solid black;
+      display: none;
+      z-index: 9999; /* メッセージを最前面に表示 */
+    }
+  </style>
+</head>
+<body>
+  <a-scene embedded arjs="sourceType: webcam; debugUIEnabled: false;">
+    <!-- ARコンテンツをここに追加 -->
+    <a-marker preset="hiro">
+      <a-box position="-1 0.5 1" rotation="0 45 0" color="#4CC3D9"></a-box>
+    </a-marker>
+  </a-scene>
+
+  <!-- メッセージを表示する要素 -->
+  <div id="message">
+    <p id="messageText"></p>
+  </div>
+
+  <!-- 位置情報を表示する要素 -->
+  <div id="locationInfo" style="position: absolute; bottom: 10px; left: 10px; background-color: white; padding: 10px; border: 2px solid black;">
+    <p>自分の位置: <span id="currentLocation"></span><br>ターゲットの位置: <span id="targetLocation">35.681236, 139.767125</span></p>
+  </div>
+
+  <script>
+    // 緯度経度の設定
+    const targetLatitude = 35.6681634; // 例: 東京の緯度
+    const targetLongitude = 139.7917795; // 例: 東京の経度
+    const targetRadius = 10; // 範囲の半径 (メートル)
+
+    // GPS位置の更新
+    function updateGPSPosition(position) {
+      const { latitude, longitude } = position.coords;
+      const distance = calculateDistance(latitude, longitude, targetLatitude, targetLongitude);
+
+      // 位置情報を画面に表示
+      document.getElementById('currentLocation').innerText = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+
+      // 範囲内に入っているかどうかでメッセージを更新
+      if (distance <= targetRadius) {
+        showMessage("範囲内に入りました！");
+      } else {
+        showMessage("範囲外です。");
+      }
+    }
+
+    // メッセージを表示する関数
+    function showMessage(message) {
+      d
